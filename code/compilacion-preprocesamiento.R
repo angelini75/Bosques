@@ -168,7 +168,7 @@ for(i in seq_along(r)){
 }
 
 #### END compiling zooniverse data #####
-rm(list = ls()[-14])
+rm(list = ls()[-13])
 name <- function(x) { as.data.frame(names(x))}
 
 save.image("~/git/Bosques/results/zoon.data.RData")
