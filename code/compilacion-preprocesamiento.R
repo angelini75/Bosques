@@ -171,29 +171,5 @@ for(i in seq_along(r)){
 rm(list = ls()[-14])
 name <- function(x) { as.data.frame(names(x))}
 
+save.image("~/git/Bosques/results/zoon.data.RData")
 
-### Compiling shapes files with segments and clsses information
-
-detach("package:data.table", unload=TRUE)
-detach("package:tidyjson", unload=TRUE)
-detach("package:jsonlite", unload=TRUE)
-detach("package:lubridate", unload=TRUE)
-
-library(rgdal)
-library(raster)
-shp <- readOGR(SHP) 
-
-classif.files <- paste0("shp/",list.files(path = "shp/", pattern = "4326.shp"))
-
-
-y <- list()
-for(i in seq_along(classif.files)){
-  y[[i]] <- read.csv(classif.files[i], stringsAsFactors = F)
-}
-
-for (i in 1:10) {
-  y[[i]]$annotations[i] %>% prettify %>% print
-}
-for (i in 1:10) {
-  y[[i]]$subject_data[i] %>% prettify %>% print
-}
