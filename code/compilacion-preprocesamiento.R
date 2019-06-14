@@ -189,5 +189,5 @@ names(e) <- c("prov.id","reg.id", "unlu", "seg", "id")
 
 e <- e[,c("id", "unlu", "seg")] %>% as.data.frame()
 r[["esp"]] <- e
-
+rm(list = ls()[-1])
 save.image("~/git/Bosques/results/zoon.data.RData")
