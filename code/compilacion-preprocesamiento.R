@@ -186,8 +186,18 @@ library(mapview)
 e <- readOGR("shp/ESP/espinal_union_4326.shp")
 names(e)
 names(e) <- c("prov.id","reg.id", "unlu", "seg", "id") 
-
+# 
 e <- e[,c("id", "unlu", "seg")] %>% as.data.frame()
+
+clases <- c( "TF_estable","OTF_estable", "OT_estable", "TF_perdida_1998-2006",
+             "OTF_perdida_1998-2006", "TF_perdida_2006-2013",  
+             "OTF_perdida_2006-2013", "TF_perdida_2013-2017",  
+             "OTF_perdida_2013-2017", "No_es_posible_determinar")
+class <- data.frame(clase = clases, cla.id = 1:10)
+e <-  data.frame(e, class[match(e$unlu, class$cla.id),])
+names(e) <- c("id", "clase", "seg", "unlu",  "cla.id")
+e <- e[,c("id", "unlu", "seg")]
+
 r[["esp"]] <- e
-rm(list = ls()[-4])
+rm(list = ls()[-6])
 save.image("~/git/Bosques/results/zoon.data.RData")
