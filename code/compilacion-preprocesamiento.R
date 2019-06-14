@@ -66,7 +66,7 @@ for(i in seq_along(segmentos)){
 
 ## Sort tables by region
 csv.names <- c("pchh", "pchs", "pchsf_r","pchsf", "pchs_r", "pchh_r",
-               "smi_r", "smi", "yungas_r", "yungas")
+               "smi_r", "smi", "stb_r", "stb")
 names(clases) <- csv.names
 names(segmentos) <- csv.names
 
@@ -171,5 +171,23 @@ for(i in seq_along(r)){
 rm(list = ls()[-13])
 name <- function(x) { as.data.frame(names(x))}
 
-save.image("~/git/Bosques/results/zoon.data.RData")
+for (i in seq_along(r)) {
+  names(r[[i]]) <- c("id", "unlu", "seg")  
+}
 
+
+
+#### Compilacion datos de espinal
+library(rgdal)
+library(raster)
+library(mapview)
+
+# levanto espinal
+e <- readOGR("shp/ESP/espinal_union_4326.shp")
+names(e)
+names(e) <- c("prov.id","reg.id", "unlu", "seg", "id") 
+
+e <- e[,c("id", "unlu", "seg")] %>% as.data.frame()
+r[["esp"]] <- e
+
+save.image("~/git/Bosques/results/zoon.data.RData")
