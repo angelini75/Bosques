@@ -1,5 +1,5 @@
 rm(list = ls())
-
+name <- function(x) { as.data.frame(names(x))}
 load(file = "results/zoon.data.RData")
 ####
 ### Compiling shapes files with segments and clsses information
@@ -7,6 +7,7 @@ library(rgdal)
 library(raster)
 library(mapview)
 library(dplyr)
+library(rgeos)
 
 ref.files <- paste0("shp/",list.files(path = "shp/", pattern = "4326.shp"))
 
@@ -15,8 +16,8 @@ for(i in seq_along(ref.files)){
   y[[i]] <- readOGR(ref.files[i])
 }
 names(y) <- c("esp", "pchh", "pchs", "smi", "stb")
-mapview(y[["esp"]]) + mapview(y[["pchh"]]) + mapview(y[["pchs"]]) + 
-  mapview(y[["smi"]]) + mapview(y[["stb"]])
+#mapview(y[["esp"]]) + mapview(y[["pchh"]]) + mapview(y[["pchs"]]) + 
+#  mapview(y[["smi"]]) + mapview(y[["stb"]])
 
 for(i in seq_along(y)){
   y[[i]]@data <- y[[i]]@data[,c("IDENTIF", "PROVINCIA", "REGION", "MAJORITY")]
@@ -64,35 +65,40 @@ for(i in seq_along(y)){
   y[[i]]@data <-  data.frame(y[[i]]@data, class[match(y[[i]]@data$unsef, class$cla.id),])
   y[[i]]@data <- y[[i]]@data[,-length(y[[i]]@data)]
 }
+for(i in seq_along(y)){
+  names(y[[i]]@data) <- c("id", "prov.id", "reg.id", "cla.id", "provincia", 
+                          "region", "unsef" )
+}
 
 for(i in names(y)){
   y[[i]]@data <-  data.frame(y[[i]]@data, r[[i]][match(y[[i]]@data$id, r[[i]]$id),])
 }
 
-columns <- c("IDENTIF", "Provincia","region","categoria", "id","variable.x","value.x")
+columns <- c("id", "provincia","region", "unsef", "unlu","seg")
 
-for(i in names(y)[2:5]){
+for(i in names(y)){
   y[[i]]@data <-  y[[i]]@data[,columns]
 }
 
 
-# espinal tiene varias provincias
-provincias <- c("Corrientes", "Jujuy", "La Rioja", "Formosa", "Misiones", 
-                "Catamarca", "Salta", "San Luis", "Entre Ríos", "Tucumán",
-                "Santa Fe", "Buenos Aires", "Chaco", "Córdoba", 
-                "Santiago del Estero", "La Pampa", "San Juan")
-prov <- data.frame(provincia = provincias, prov.id = 1:17)
+# calcular area de cada polígono
+# reproyectar
+posgar98 <- CRS("+proj=tmerc +lat_0=-90 +lon_0=-66 +k=1 +x_0=3500000 +y_0=0 +ellps=GRS80 +units=m +no_defs ")
+
+for(i in names(y)){
+  y[[i]] <- spTransform(y[[i]],posgar98)
+  y[[i]]$ha <- area(y[[i]])/10000
+}
 
 
-save.image("~/git/Bosques/results/zoon.data.RData")
-
-
-
+# seleccionar provincias
 p <- readOGR("shp/gadm36_ARG_1.shp")
 p <- p[which(p$NAME_1 %in% provincias),]
 p <- p[,4]
 names(p) <- "provincia"
-
 p@data <-  data.frame(p@data, 
                       prov[match(p@data$provincia, prov$provincia),])[,-2]
+p$area.prov <- area(p)/10000
 
+# regiones
+R <- readOGR("shp/regiones_forestales_2.shp")
