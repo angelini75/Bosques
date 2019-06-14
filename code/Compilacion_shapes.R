@@ -1,12 +1,12 @@
 rm(list = ls())
 
 load(file = "results/zoon.data.RData")
-names(r)[4] <- "stb"
 ####
 ### Compiling shapes files with segments and clsses information
 library(rgdal)
 library(raster)
 library(mapview)
+library(dplyr)
 
 ref.files <- paste0("shp/",list.files(path = "shp/", pattern = "4326.shp"))
 
@@ -17,9 +17,6 @@ for(i in seq_along(ref.files)){
 names(y) <- c("esp", "pchh", "pchs", "smi", "stb")
 mapview(y[["esp"]]) + mapview(y[["pchh"]]) + mapview(y[["pchs"]]) + 
   mapview(y[["smi"]]) + mapview(y[["stb"]])
-
-
-
 
 for(i in seq_along(y)){
   y[[i]]@data <- y[[i]]@data[,c("IDENTIF", "PROVINCIA", "REGION", "MAJORITY")]
@@ -34,7 +31,7 @@ reg <- data.frame(region = regiones, reg.id = 1:6)
 provincias <- c("Corrientes", "Jujuy", "La Rioja", "Formosa", "Misiones", 
                 "Catamarca", "Salta", "San Luis", "Entre Ríos", "Tucumán",
                 "Santa Fe", "Buenos Aires", "Chaco", "Córdoba", 
-                "Santiago del Estero", "La Pampa", "San juan")
+                "Santiago del Estero", "La Pampa", "San Juan")
 prov <- data.frame(provincia = provincias, prov.id = 1:17)
 
 for(i in seq_along(y)){
@@ -68,12 +65,34 @@ for(i in seq_along(y)){
   y[[i]]@data <- y[[i]]@data[,-length(y[[i]]@data)]
 }
 
-# for(i in names(y)[2:5]){
-#   y[[i]]@data <-  data.frame(y[[i]]@data, r[[i]][match(y[[i]]@data$id, r[[i]]$id),])
-# }
-# 
-# columns <- c("IDENTIF", "Provincia","region","categoria", "id","variable.x","value.x")
-# 
-# for(i in names(y)[2:5]){
-#   y[[i]]@data <-  y[[i]]@data[,columns]
-# }
+for(i in names(y)){
+  y[[i]]@data <-  data.frame(y[[i]]@data, r[[i]][match(y[[i]]@data$id, r[[i]]$id),])
+}
+
+columns <- c("IDENTIF", "Provincia","region","categoria", "id","variable.x","value.x")
+
+for(i in names(y)[2:5]){
+  y[[i]]@data <-  y[[i]]@data[,columns]
+}
+
+
+# espinal tiene varias provincias
+provincias <- c("Corrientes", "Jujuy", "La Rioja", "Formosa", "Misiones", 
+                "Catamarca", "Salta", "San Luis", "Entre Ríos", "Tucumán",
+                "Santa Fe", "Buenos Aires", "Chaco", "Córdoba", 
+                "Santiago del Estero", "La Pampa", "San Juan")
+prov <- data.frame(provincia = provincias, prov.id = 1:17)
+
+
+save.image("~/git/Bosques/results/zoon.data.RData")
+
+
+
+p <- readOGR("shp/gadm36_ARG_1.shp")
+p <- p[which(p$NAME_1 %in% provincias),]
+p <- p[,4]
+names(p) <- "provincia"
+
+p@data <-  data.frame(p@data, 
+                      prov[match(p@data$provincia, prov$provincia),])[,-2]
+
