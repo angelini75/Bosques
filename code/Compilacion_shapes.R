@@ -101,4 +101,13 @@ p@data <-  data.frame(p@data,
 p$area.prov <- area(p)/10000
 
 # regiones
-R <- readOGR("shp/regiones_forestales_2.shp")
+R <- shapefile("shp/regiones_forestales_2.shp")
+R$REGIONES <- c("stb", "pch", "esp", "esp", "smi")
+R$area.reg <- area(R)/10000
+R@data <- R@data[,c(1,5)]
+names(R)[1] <- c("regiones")
+# intersectar provincias y regiones
+rp <- intersect(R,p)
+rp$area.rp <- area(rp)/10000 #superficie de regiones por provincia-region
+
+mapview(rp)
