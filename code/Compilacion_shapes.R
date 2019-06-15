@@ -84,15 +84,19 @@ for(i in names(y)){
 # calcular area de cada polígono
 # reproyectar
 posgar98 <- CRS("+proj=tmerc +lat_0=-90 +lon_0=-66 +k=1 +x_0=3500000 +y_0=0 +ellps=GRS80 +units=m +no_defs ")
+wgs84 <- CRS("+init=epsg:4326")
 
 for(i in names(y)){
   y[[i]] <- spTransform(y[[i]],posgar98)
   y[[i]]$ha <- area(y[[i]])/10000
 }
 
+# Para el análisis estadístico hace falta la superficie de las regiones, 
+# de las provincias y de las regiones por provincia.
 
-# seleccionar provincias
+# seleccionar provincias y calcular area
 p <- readOGR("shp/gadm36_ARG_1.shp")
+p <- spTransform(p, posgar98)
 p <- p[which(p$NAME_1 %in% provincias),]
 p <- p[,4]
 names(p) <- "provincia"
@@ -100,14 +104,38 @@ p@data <-  data.frame(p@data,
                       prov[match(p@data$provincia, prov$provincia),])[,-2]
 p$area.prov <- area(p)/10000
 
-# regiones
+# regiones y calcular area
 R <- shapefile("shp/regiones_forestales_2.shp")
+R <- spTransform(R, posgar98)
 R$REGIONES <- c("stb", "pch", "esp", "esp", "smi")
 R$area.reg <- area(R)/10000
 R@data <- R@data[,c(1,5)]
 names(R)[1] <- c("regiones")
-# intersectar provincias y regiones
+# intersectar provincias y regiones y calcular area
 rp <- intersect(R,p)
 rp$area.rp <- area(rp)/10000 #superficie de regiones por provincia-region
 
-mapview(rp)
+rp@data <- rp@data[,c("area.reg", "area.prov", "area.rp")]
+#resultado
+mapview(rp, zcol = "area.reg")
+
+# Ahora cruzamos segmentos con rp
+for (i in seq_along(y)) {
+y[[i]]@data <- cbind(y[[i]]@data, over(x = y[[i]], y = rp))    
+}
+# y ahora juntamos todos los segmentos, en un shape y en una tabla (por las dudas)
+# library(maptools)
+# spRbind(y[[1]],y[[2]])
+
+for (i in seq_along(y)) {
+  y[[i]] <- as.data.frame(y[[i]])
+}
+
+Y <- rbind(y[[1]], y[[2]], y[[3]], y[[4]], y[[5]])
+
+# fix 
+Y[Y$id == 141464,8:10] <- Y[Y$id == 140038,8:10]
+Y[Y$id == 2649,8:10] <- Y[Y$id == 226475,8:10]
+
+rm(list = ls()[-23])
+save.image("~/git/Bosques/results/segmentos.RData")
