@@ -137,5 +137,5 @@ Y <- rbind(y[[1]], y[[2]], y[[3]], y[[4]], y[[5]])
 Y[Y$id == 141464,8:10] <- Y[Y$id == 140038,8:10]
 Y[Y$id == 2649,8:10] <- Y[Y$id == 226475,8:10]
 
-rm(list = ls()[-23])
+rm(list = ls()[-19])
 save.image("~/git/Bosques/results/segmentos.RData")
