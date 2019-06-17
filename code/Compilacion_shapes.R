@@ -116,15 +116,20 @@ R@data <- R@data[,c(1,5)]
 names(R)[1] <- c("regiones")
 # intersectar provincias y regiones y calcular area
 rp <- intersect(R,p)
-rp$area.rp <- area(rp)/10000 #superficie de regiones por provincia-region
+rp$area.estrato <- area(rp)/10000 #superficie de regiones por provincia-region
 
-rp@data <- rp@data[,c("area.reg", "area.prov", "area.rp")]
+rp$estrato <- paste0(rp$regiones,".",rp$provincia)
+
+rp@data <- rp@data[,c("estrato", "area.reg", "area.prov", "area.estrato")]
 #resultado
-mapview(rp, zcol = "area.rp")
+mapview(rp, zcol = "estrato")
 
-# Ahora cruzamos segmentos con rp
+# Ahora cruzamos segmentos con estratos
 for (i in seq_along(y)) {
-y[[i]]@data <- cbind(y[[i]]@data, over(x = y[[i]], y = rp))    
+y[[i]]@data <- merge(x = y[[i]]@data, y = rp, by = "estrato", all.x = TRUE)
+y[[i]]@data <- y[[i]]@data[c("id", "estrato", "provincia", "region", "unsef",
+                             "unlu", "seg", "ha", "area.reg", "area.prov", 
+                             "area.estrato")]
 }
 # y ahora juntamos todos los segmentos, en un shape y en una tabla (por las dudas)
 # library(maptools)
