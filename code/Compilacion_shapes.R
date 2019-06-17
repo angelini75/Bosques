@@ -151,5 +151,5 @@ Y <- rbind(y[[1]], y[[2]], y[[3]], y[[4]], y[[5]])
 Y[Y$id == 141464,8:10] <- Y[Y$id == 140038,8:10]
 Y[Y$id == 2649,8:10] <- Y[Y$id == 226475,8:10]
 
-rm(list = ls()[-20])
+rm(list = ls()[c(-17,-20)]) #nos quedamos con el mapa de estratos y la tabla final
 save.image("~/git/Bosques/results/segmentos.RData")
