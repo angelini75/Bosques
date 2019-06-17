@@ -118,9 +118,15 @@ names(R)[1] <- c("regiones")
 rp <- intersect(R,p)
 rp$area.estrato <- area(rp)/10000 #superficie de regiones por provincia-region
 
+# hay que dividir pch en pchh y pchs
+pchh <- c("Corrientes", "Formosa", "Santa Fe", "Chaco")
+rp@data$regiones[which(rp@data$provincia %in% pchh)][1:4] <- "pchh"
+rp@data$regiones[rp@data$regiones == "pch"] <- "pchs"
+       
+# Creamos estratos
 rp$estrato <- paste0(rp$regiones,".",rp$provincia)
-
 rp@data <- rp@data[,c("estrato", "area.reg", "area.prov", "area.estrato")]
+
 #resultado
 mapview(rp, zcol = "estrato")
 
@@ -145,5 +151,5 @@ Y <- rbind(y[[1]], y[[2]], y[[3]], y[[4]], y[[5]])
 Y[Y$id == 141464,8:10] <- Y[Y$id == 140038,8:10]
 Y[Y$id == 2649,8:10] <- Y[Y$id == 226475,8:10]
 
-rm(list = ls()[-19])
+rm(list = ls()[-20])
 save.image("~/git/Bosques/results/segmentos.RData")
