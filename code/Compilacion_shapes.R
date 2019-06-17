@@ -80,6 +80,9 @@ for(i in names(y)){
   y[[i]]@data <-  y[[i]]@data[,columns]
 }
 
+for(i in names(y)){
+  y[[i]]@data$estrato <-  paste0(y[[i]]@data$region,".",y[[i]]@data$provincia)
+}
 
 # calcular area de cada polígono
 # reproyectar
@@ -117,7 +120,7 @@ rp$area.rp <- area(rp)/10000 #superficie de regiones por provincia-region
 
 rp@data <- rp@data[,c("area.reg", "area.prov", "area.rp")]
 #resultado
-mapview(rp, zcol = "area.reg")
+mapview(rp, zcol = "area.rp")
 
 # Ahora cruzamos segmentos con rp
 for (i in seq_along(y)) {
