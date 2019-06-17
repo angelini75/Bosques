@@ -131,8 +131,8 @@ y[[i]]@data <- y[[i]]@data[c("id", "estrato", "provincia", "region", "unsef",
                              "unlu", "seg", "ha", "area.reg", "area.prov", 
                              "area.estrato")]
 }
-# y ahora juntamos todos los segmentos, en un shape y en una tabla (por las dudas)
-# library(maptools)
+# y ahora juntamos todos los segmentos, (en un shape y) en una tabla
+# library(maptools) no finalizado
 # spRbind(y[[1]],y[[2]])
 
 for (i in seq_along(y)) {
