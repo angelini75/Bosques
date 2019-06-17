@@ -41,3 +41,10 @@ e <- y %>% group_by(estrato, region, provincia, area.estrato) %>%
             hatt_h = sum(y_hi / pi_hi), # area bien clasificada
             hatp_h = hatt_h/N_h) # proporción bien clasificada
 e
+
+# mostrar en el mapa
+rp@data$estrato <- as.character(rp@data$estrato)
+e$estrato <- as.character(e$estrato)
+rp@data <- data.frame(rp@data, e[match(rp@data$estrato, e$estrato),])
+
+mapview(rp, zcol = "hatp_h", at = seq(0.4, 1,length.out = 6))
