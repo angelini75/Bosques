@@ -48,3 +48,26 @@ e$estrato <- as.character(e$estrato)
 rp@data <- data.frame(rp@data, e[match(rp@data$estrato, e$estrato),])
 
 mapview(rp, zcol = "hatp_h", at = seq(0.4, 1,length.out = 6))
+
+# estimación de \hat{t}_r y \hat{p}_r por region
+e$region_t <- as.character(e$region)
+e$region_t[e$region_t == "pchh"]<- "pch"
+e$region_t[e$region_t == "pchs"]<- "pch"
+(r <- e %>% group_by(region_t) %>% 
+  summarise(hatt_r = sum(hatt_h),
+            hatp_r = hatt_r/sum(area.estrato)))
+
+rp@data <- data.frame(rp@data, r[match(rp@data$region, r$region),])
+mapview(rp, zcol = "hatp")
+
+# estimación de \hat{t}_p y \hat{p}_p por provincia
+(p <- e %>% group_by(provincia) %>% 
+    summarise(hatt_p = sum(hatt_h),
+              hatp_p = hatt_p/sum(area.estrato)))
+
+
+# estimación de hat{t} y hat{p} total
+(e %>% group_by() %>% 
+    summarise(hatt_p = sum(hatt_h),
+              hatp_p = hatt_p/sum(area.estrato)))
+
