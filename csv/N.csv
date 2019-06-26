@@ -1,0 +1,207 @@
+clase,N,provincia,region
+1,5755,Buenos Aires,esp
+2,13256,Buenos Aires,esp
+3,99563,Buenos Aires,esp
+6,83,Buenos Aires,esp
+7,77,Buenos Aires,esp
+8,5,Buenos Aires,esp
+9,57,Buenos Aires,esp
+1,3048,Córdoba,esp
+2,3672,Córdoba,esp
+3,168400,Córdoba,esp
+4,321,Córdoba,esp
+5,29,Córdoba,esp
+6,62,Córdoba,esp
+7,118,Córdoba,esp
+1,219315,Chaco,pchh
+2,42169,Chaco,pchh
+3,245168,Chaco,pchh
+4,15425,Chaco,pchh
+5,661,Chaco,pchh
+6,17301,Chaco,pchh
+7,1293,Chaco,pchh
+8,6399,Chaco,pchh
+9,469,Chaco,pchh
+1,17839,Catamarca,pchs
+2,47978,Catamarca,pchs
+3,49478,Catamarca,pchs
+4,2861,Catamarca,pchs
+5,4376,Catamarca,pchs
+6,533,Catamarca,pchs
+7,1175,Catamarca,pchs
+8,190,Catamarca,pchs
+9,177,Catamarca,pchs
+1,1879,Catamarca,stb
+2,1894,Catamarca,stb
+3,4828,Catamarca,stb
+4,18,Catamarca,stb
+7,1,Catamarca,stb
+1,4321,Corrientes,esp
+2,12785,Corrientes,esp
+3,126144,Corrientes,esp
+4,15,Corrientes,esp
+5,77,Corrientes,esp
+6,41,Corrientes,esp
+7,261,Corrientes,esp
+8,10,Corrientes,esp
+9,62,Corrientes,esp
+1,3201,Corrientes,pchh
+2,8326,Corrientes,pchh
+3,218003,Corrientes,pchh
+5,31,Corrientes,pchh
+6,35,Corrientes,pchh
+7,64,Corrientes,pchh
+8,8,Corrientes,pchh
+9,12,Corrientes,pchh
+1,63729,Entre Ríos,esp
+2,22838,Entre Ríos,esp
+3,154237,Entre Ríos,esp
+6,5041,Entre Ríos,esp
+7,1856,Entre Ríos,esp
+8,917,Entre Ríos,esp
+9,173,Entre Ríos,esp
+1,152753,Formosa,pchh
+2,117663,Formosa,pchh
+3,125660,Formosa,pchh
+4,3225,Formosa,pchh
+5,1028,Formosa,pchh
+6,14438,Formosa,pchh
+7,2007,Formosa,pchh
+8,4225,Formosa,pchh
+9,964,Formosa,pchh
+1,599,Corrientes,smi
+2,1333,Corrientes,smi
+3,58213,Corrientes,smi
+6,2,Corrientes,smi
+7,1,Corrientes,smi
+1,3936,Jujuy,pchs
+2,155,Jujuy,pchs
+3,2681,Jujuy,pchs
+4,270,Jujuy,pchs
+5,4,Jujuy,pchs
+6,605,Jujuy,pchs
+7,11,Jujuy,pchs
+8,175,Jujuy,pchs
+1,47291,Jujuy,stb
+2,4872,Jujuy,stb
+3,23246,Jujuy,stb
+4,670,Jujuy,stb
+5,202,Jujuy,stb
+6,854,Jujuy,stb
+7,74,Jujuy,stb
+8,132,Jujuy,stb
+9,46,Jujuy,stb
+1,51336,La Pampa,esp
+2,162024,La Pampa,esp
+3,291826,La Pampa,esp
+4,1114,La Pampa,esp
+5,5599,La Pampa,esp
+6,323,La Pampa,esp
+7,150,La Pampa,esp
+8,1742,La Pampa,esp
+9,1637,La Pampa,esp
+1,62454,Misiones,smi
+2,7709,Misiones,smi
+3,83182,Misiones,smi
+4,6194,Misiones,smi
+5,2123,Misiones,smi
+6,1755,Misiones,smi
+7,270,Misiones,smi
+8,265,Misiones,smi
+9,26,Misiones,smi
+1,32541,La Rioja,pchs
+2,209017,La Rioja,pchs
+3,59631,La Rioja,pchs
+4,234,La Rioja,pchs
+5,1383,La Rioja,pchs
+6,1189,La Rioja,pchs
+7,1868,La Rioja,pchs
+8,413,La Rioja,pchs
+9,1803,La Rioja,pchs
+1,176562,Salta,pchs
+2,51497,Salta,pchs
+3,94963,Salta,pchs
+4,30096,Salta,pchs
+5,1125,Salta,pchs
+6,33221,Salta,pchs
+7,2029,Salta,pchs
+8,7271,Salta,pchs
+9,416,Salta,pchs
+1,123174,Salta,stb
+2,7567,Salta,stb
+3,40837,Salta,stb
+4,5293,Salta,stb
+5,693,Salta,stb
+6,2417,Salta,stb
+7,217,Salta,stb
+8,294,Salta,stb
+9,10,Salta,stb
+1,25424,San Luis,esp
+2,62458,San Luis,esp
+3,163259,San Luis,esp
+4,3419,San Luis,esp
+5,4146,San Luis,esp
+6,1748,San Luis,esp
+7,2440,San Luis,esp
+8,305,San Luis,esp
+9,1402,San Luis,esp
+1,9229,San Luis,pchs
+2,125359,San Luis,pchs
+3,33641,San Luis,pchs
+4,1002,San Luis,pchs
+5,3530,San Luis,pchs
+6,926,San Luis,pchs
+7,3539,San Luis,pchs
+8,286,San Luis,pchs
+9,1491,San Luis,pchs
+1,30217,Tucumán,stb
+2,3088,Tucumán,stb
+3,20164,Tucumán,stb
+4,204,Tucumán,stb
+5,20,Tucumán,stb
+6,102,Tucumán,stb
+7,27,Tucumán,stb
+8,11,Tucumán,stb
+9,1,Tucumán,stb
+1,11234,Tucumán,pchs
+2,6619,Tucumán,pchs
+3,43057,Tucumán,pchs
+4,3137,Tucumán,pchs
+5,644,Tucumán,pchs
+6,1202,Tucumán,pchs
+7,894,Tucumán,pchs
+8,180,Tucumán,pchs
+9,55,Tucumán,pchs
+1,245,San Juan,pchs
+2,31575,San Juan,pchs
+3,15864,San Juan,pchs
+5,13,San Juan,pchs
+7,51,San Juan,pchs
+1,31149,Santa Fe,pchh
+2,27838,Santa Fe,pchh
+3,334884,Santa Fe,pchh
+4,1928,Santa Fe,pchh
+5,1603,Santa Fe,pchh
+6,725,Santa Fe,pchh
+7,794,Santa Fe,pchh
+8,125,Santa Fe,pchh
+9,184,Santa Fe,pchh
+1,47601,Córdoba,pchs
+2,89620,Córdoba,pchs
+3,245234,Córdoba,pchs
+4,13287,Córdoba,pchs
+5,3977,Córdoba,pchs
+6,3338,Córdoba,pchs
+7,1184,Córdoba,pchs
+8,131,Córdoba,pchs
+9,109,Córdoba,pchs
+1,233143,Santiago del Estero,pchs
+2,89693,Santiago del Estero,pchs
+3,327123,Santiago del Estero,pchs
+4,51126,Santiago del Estero,pchs
+5,8507,Santiago del Estero,pchs
+6,46777,Santiago del Estero,pchs
+7,6500,Santiago del Estero,pchs
+8,7896,Santiago del Estero,pchs
+9,1202,Santiago del Estero,pchs
+
