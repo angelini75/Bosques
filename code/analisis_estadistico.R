@@ -40,10 +40,14 @@ Y$ix <- ifelse(test = Y$unsef == Y$unlu, yes = 1, no = 0) # alternativa
 # ahora empezamos a usar tidyverse
 (y <- as.tbl(Y))
 y$estrato <- y$estrato %>% as.factor
-y <- y %>% group_by(estrato.clase) %>% mutate(pi_hi = n()/N)
+
+# calculamos el peso de cada muestra en base a la cantidad de veces clasificados
+# de la misma manera
+# y <- y %>%  mutate(w = 1/seg)
+y <- y %>% group_by(estrato.clase) %>% mutate(pi_hi = n()/N, n = n())
 
 # Agrupamos por estratos
-e <- y %>% group_by(estrato, area.estrato) %>% 
+e <- y %>% group_by(estrato, provincia, region, area.estrato) %>% 
   # pi_i es la probabilidad de inclusión del segmento i en el estrato h
   # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
   # pi_{hi} = n_h/N_h 
@@ -51,15 +55,19 @@ e <- y %>% group_by(estrato, area.estrato) %>%
   # N_h total number of segments in stratum h, and 
   # y_{hi} the area correctly classified in segment i of stratum h.
   summarise(A = unique(area.estrato),
-            # n_h = n(), # area total muestreada dentro del estrato 
-            # N_h = unique(N), # área total del estrato
+            n = n(), # area total muestreada dentro del estrato 
+            N_h = first(N), # área total del estrato
             hatt_h = sum(y_hi/pi_hi , na.rm = TRUE), # area bien clasificada
-            hatp_h = hatt_h/A # proporción bien clasificada
-            # var_y_h = var(y_hi), # varianza de y dentro del segmento
-            #                      # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
-            # var_hatt = var_y_h / n_h # varianza de hatt
+            hatp_h = hatt_h/A, # proporción bien clasificada
+                               # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
+            var_hatt = (N_h^2) * var(y_hi)/n,# varianza de hatt
+            error = qt(0.975, df = n - 1) * sqrt(var_hatt),
+            hatt.ul.CI = hatt_h + error, # area upper limit confidence interval
+            hatt.ll.CI = hatt_h - error, # area lower limit confidence interval
+            hatp.ll.CI = hatt.ll.CI/A,
+            hatp.ul.CI = hatt.ul.CI/A
             )
-e
+e[,]
 
 # mostrar en el mapa
 rp@data$estrato <- as.character(rp@data$estrato)
@@ -69,15 +77,15 @@ rp@data <- data.frame(rp@data, e[match(rp@data$estrato, e$estrato),])
 mapview(rp, zcol = "hatp_h", at = seq(0.4, 1,length.out = 6))
 
 # estimación de \hat{t}_r y \hat{p}_r por region
-e$region_t <- as.character(e$region)
-e$region_t[e$region_t == "pchh"]<- "pch"
-e$region_t[e$region_t == "pchs"]<- "pch"
-(r <- e %>% group_by(region_t) %>% 
+e$region <- as.character(e$region)
+e$region[e$region == "pchh"] <- "pch"
+e$region[e$region == "pchs"]<- "pch"
+(r <- e %>% group_by(region) %>% 
   summarise(hatt_r = sum(hatt_h),
             hatp_r = hatt_r/sum(area.estrato)))
 
-rp@data <- data.frame(rp@data, r[match(rp@data$region, r$region),])
-mapview(rp, zcol = "hatp")
+rp@data <- data.frame(rp@data, r[match(rp@data$region, r$region_t),])
+mapview(rp, zcol = "hatp_r")
 
 # estimación de \hat{t}_p y \hat{p}_p por provincia
 (p <- e %>% group_by(provincia) %>% 
