@@ -1,3 +1,5 @@
+## Code developed by Marcos Angelini, Dick Brus and Gerard Heuvelink
+
 set.seed(12345) # reproducible research
 
 A = 2500000 # area of the stratum
