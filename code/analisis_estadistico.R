@@ -6,6 +6,13 @@ library(mapview)
 library(tidyverse) # requiere entender https://r4ds.had.co.nz/transform.html
 library(ggalluvial)
 
+area.reg <- Y %>% select(region, estrato,area.estrato) %>% group_by(estrato) %>% 
+  mutate(n=n()) %>% group_by(region) %>% unique() %>% 
+  summarise(area.reg = sum(area.estrato))
+area.reg <- Y %>% select(region, estrato,area.estrato) %>% group_by(estrato) %>% 
+  mutate(n=n()) %>% group_by(region) %>% unique() %>% 
+  summarise(area.reg = sum(area.estrato))
+
 # Por ahora nos quedamos con los segmentos con datos completos
 Y <- Y[complete.cases(Y),]
 # N_h <- read.csv("csv/N_h.csv")
@@ -36,10 +43,21 @@ class <- data.frame(clas.name = clases, clase = 1:10)
 N <- merge(x = N, y = class, by = "clase")
 N$estrato <- paste0(N$region, ".", N$provincia)
 N$estrato.clase <- paste0(N$estrato, ".", N$clas.name)
+N <- N %>% select(provincia, N) %>% unique() %>% group_by(provincia) %>%
+  mutate(N.prov = sum(N)) %>% select(provincia, N.prov) %>% unique() %>% 
+  merge(y = N, by = "provincia")
+N <- N %>% select(region, N) %>% unique() %>% group_by(region) %>%
+  mutate(N.reg = sum(N)) %>% select(region, N.reg) %>% unique() %>% 
+  merge(y = N, by = "region")
+N <- N %>% select(estrato, N) %>% unique() %>% group_by(estrato) %>%
+  mutate(N.estr = sum(N)) %>% select(estrato, N.estr) %>% unique() %>% 
+  merge(y = N, by = "estrato")
+N <- N %>% select(estrato.clase, N.estr.cls = N, N.estr, N.prov, N.reg)
+
+
 # creamos el mismo campo en Y
 Y$estrato.clase <- paste0(Y$estrato, ".", Y$unsef)
-# ahora taemos el numero de segmentos por estrato.clase
-N <- unique(N[, c("estrato.clase","N")])
+# ahora traemos el numero de segmentos por estrato.clase
 N$estrato.clase <- gsub(pattern = " ",replacement = "_", x = N$estrato.clase)
 Y$estrato.clase <- gsub(pattern = " ",replacement = "_", x = Y$estrato.clase)
 Y <- merge(x = Y, y = N, by = "estrato.clase", all.x = T)
@@ -47,19 +65,19 @@ Y <- merge(x = Y, y = N, by = "estrato.clase", all.x = T)
 # y_hi = área de los segmentos bien clasificados
 Y$y_hi <- 0 # 0 para aquellos segmentos mal clasificados
 Y$y_hi[Y$unsef == Y$unlu] <- Y$ha[Y$unsef == Y$unlu] # bien clasificados
-Y$ix <- ifelse(test = Y$unsef == Y$unlu, yes = 1, no = 0) # alternativa
+Y$index <- ifelse(test = Y$unsef == Y$unlu, yes = 1, no = 0) # alternativa
 
 # ahora empezamos a usar tidyverse
 (y <- as.tbl(Y))
-y$estrato <- y$estrato %>% as.factor
+# y$estrato <- y$estrato %>% as.factor
 
 # calculamos el peso de cada muestra en base a la cantidad de veces clasificados
 # de la misma manera
 # y <- y %>%  mutate(w = 1/seg)
-y <- y %>% group_by(estrato.clase) %>% mutate(pi_hi = n()/N, n = n())
+y <- y %>% group_by(estrato.clase) %>% mutate(pi_hi = n()/N.estr.cls, n = n())
 
-# Agrupamos por estratos
-e <- y %>% group_by(estrato, provincia, region, area.estrato) %>% 
+# resultado por estrato
+e <- y %>% group_by(estrato) %>% 
   # pi_i es la probabilidad de inclusión del segmento i en el estrato h
   # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
   # pi_{hi} = n_h/N_h 
@@ -67,8 +85,8 @@ e <- y %>% group_by(estrato, provincia, region, area.estrato) %>%
   # N_h total number of segments in stratum h, and 
   # y_{hi} the area correctly classified in segment i of stratum h.
   summarise(A = unique(area.estrato),
-            n = n(), # area total muestreada dentro del estrato 
-            N_h = first(N), # área total del estrato
+            n = n(), # numero de segmentos muestreados dentro del estrato 
+            N_h = first(N.estr), # numero total de segmentos por estrato
             hatt_h = sum(y_hi/pi_hi , na.rm = TRUE), # area bien clasificada
             hatp_h = hatt_h/A, # proporción bien clasificada
                                # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
@@ -79,7 +97,56 @@ e <- y %>% group_by(estrato, provincia, region, area.estrato) %>%
             hatp.ll.CI = hatt.ll.CI/A,
             hatp.ul.CI = hatt.ul.CI/A
             )
-e[,]
+estrato <- e %>% select(Estrato = estrato, 
+                        LIArea = hatt.ll.CI,
+                        Area = hatt_h,
+                        LSArea = hatt.ul.CI,
+                        LIProporcion = hatp.ll.CI,
+                        Proporcion = hatp_h,
+                        LSProporcion = hatp.ul.CI,
+                        n = n)
+
+
+# y$region <- as.character(y$region)
+# y$region[y$region == "pchh"] <- "pch"
+# y$region[y$region == "pchs"]<- "pch"
+e <- y %>% group_by(region) %>% 
+  # pi_i es la probabilidad de inclusión del segmento i en el estrato h
+  # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
+  # pi_{hi} = n_h/N_h 
+  # n_h is sample size of stratum h, 
+  # N_h total number of segments in stratum h, and 
+  # y_{hi} the area correctly classified in segment i of stratum h.
+  summarise(A = unique(area.reg),
+            n = n(), # area total muestreada dentro de la region 
+            N_h = unique(N.reg), # área total de la region
+            hatt_h = sum(y_hi/pi_hi , na.rm = TRUE), # área bien clasificada
+            hatp_h = hatt_h/A, # proporción bien clasificada
+                               # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
+            var_hatt = (N_h^2) * var(y_hi)/n,# varianza de hatt
+            error = qt(0.975, df = n - 1) * sqrt(var_hatt),
+            hatt.ul.CI = hatt_h + error, # area upper limit confidence interval
+            hatt.ll.CI = hatt_h - error, # area lower limit confidence interval
+            hatp.ll.CI = hatt.ll.CI/A,
+            hatp.ul.CI = hatt.ul.CI/A
+            )
+region <- e %>% select(Estrato = estrato, 
+                        LIArea = hatt.ll.CI,
+                        Area = hatt_h,
+                        LSArea = hatt.ul.CI,
+                        LIProporcion = hatp.ll.CI,
+                        Proporcion = hatp_h,
+                        LSProporcion = hatp.ul.CI,
+                        n = n)
+
+
+
+
+
+
+
+
+
 
 # mostrar en el mapa
 rp@data$estrato <- as.character(rp@data$estrato)
@@ -89,12 +156,12 @@ rp@data <- data.frame(rp@data, e[match(rp@data$estrato, e$estrato),])
 mapview(rp, zcol = "hatp_h", at = seq(0.4, 1,length.out = 6))
 
 # estimación de \hat{t}_r y \hat{p}_r por region
-e$region <- as.character(e$region)
-e$region[e$region == "pchh"] <- "pch"
-e$region[e$region == "pchs"]<- "pch"
-(r <- e %>% group_by(region) %>% 
-  summarise(hatt_r = sum(hatt_h),
-            hatp_r = hatt_r/sum(area.estrato)))
+# e$region <- as.character(e$region)
+# e$region[e$region == "pchh"] <- "pch"
+# e$region[e$region == "pchs"]<- "pch"
+# (r <- e %>% group_by(region) %>% 
+#   summarise(hatt_r = sum(hatt_h),
+#             hatp_r = hatt_r/sum(area.estrato)))
 
 rp@data <- data.frame(rp@data, r[match(rp@data$region, r$region_t),])
 mapview(rp, zcol = "hatp_r")
