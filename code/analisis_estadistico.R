@@ -4,12 +4,24 @@ load(file = "results/segmentos.RData")
 rp <- rp[-1,]
 library(mapview)
 library(tidyverse) # requiere entender https://r4ds.had.co.nz/transform.html
+library(ggalluvial)
 
 # Por ahora nos quedamos con los segmentos con datos completos
 Y <- Y[complete.cases(Y),]
 # N_h <- read.csv("csv/N_h.csv")
 # N_h$estrato <- paste0(N_h$region, ".", N_h$provincia)
 # Y <- merge(x = Y, y = N_h[,3:4], by = "estrato") 
+tt <- Y %>% select(unlu, unsef, ha) %>% group_by(unlu,unsef) %>% 
+  mutate(freq = n(), area = sum(ha)) %>% unique()
+
+ggplot(data = tt,
+       aes(axis1 = unlu, axis2 = unsef, y = area)) +
+  scale_x_discrete(limits = c("unlu", "unsef"), expand = c(.1, .05)) +
+  xlab("Demographic") + geom_alluvium(aes(fill = unlu)) + geom_stratum() +
+geom_text(stat = "stratum", label.strata = TRUE) +
+  theme_minimal() 
+  ggtitle("passengers on the maiden voyage of the Titanic",
+          "stratified by demographics and survival")
 
 # resulta que cada clase dentro de cada estrato tiene una probabilidad 
 # de ser elegido diferente, por ello hay que incluir el no. de segmentos 
