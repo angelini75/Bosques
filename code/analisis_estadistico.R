@@ -9,9 +9,13 @@ library(ggalluvial)
 area.reg <- Y %>% select(region, estrato,area.estrato) %>% group_by(estrato) %>% 
   mutate(n=n()) %>% group_by(region) %>% unique() %>% 
   summarise(area.reg = sum(area.estrato))
-area.reg <- Y %>% select(region, estrato,area.estrato) %>% group_by(estrato) %>% 
-  mutate(n=n()) %>% group_by(region) %>% unique() %>% 
-  summarise(area.reg = sum(area.estrato))
+area.prov <- Y %>% select(provincia, estrato,area.estrato) %>% 
+  group_by(estrato) %>% mutate(n=n()) %>% group_by(provincia) %>% 
+  unique() %>% summarise(area.prov = sum(area.estrato))
+
+Y <- Y %>% select(-area.prov, -area.reg) %>% 
+  left_join(area.reg, by = "region") %>% 
+  left_join(area.prov, by = "provincia")
 
 # Por ahora nos quedamos con los segmentos con datos completos
 Y <- Y[complete.cases(Y),]
@@ -24,7 +28,7 @@ tt <- Y %>% select(unlu, unsef, ha) %>% group_by(unlu,unsef) %>%
 ggplot(data = tt,
        aes(axis1 = unlu, axis2 = unsef, y = area)) +
   scale_x_discrete(limits = c("unlu", "unsef"), expand = c(.1, .05)) +
-  xlab("Demographic") + geom_alluvium(aes(fill = unlu)) + geom_stratum() +
+  xlab("") + geom_alluvium(aes(fill = unlu)) + geom_stratum() +
 geom_text(stat = "stratum", label.strata = TRUE) +
   theme_minimal() 
   ggtitle("passengers on the maiden voyage of the Titanic",
@@ -69,14 +73,14 @@ Y$index <- ifelse(test = Y$unsef == Y$unlu, yes = 1, no = 0) # alternativa
 
 # ahora empezamos a usar tidyverse
 (y <- as.tbl(Y))
-# y$estrato <- y$estrato %>% as.factor
 
 # calculamos el peso de cada muestra en base a la cantidad de veces clasificados
 # de la misma manera
 # y <- y %>%  mutate(w = 1/seg)
 y <- y %>% group_by(estrato.clase) %>% mutate(pi_hi = n()/N.estr.cls, n = n())
 
-# resultado por estrato
+
+# Resultado por estrato ########################################################
 e <- y %>% group_by(estrato) %>% 
   # pi_i es la probabilidad de inclusión del segmento i en el estrato h
   # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
@@ -95,7 +99,9 @@ e <- y %>% group_by(estrato) %>%
             hatt.ul.CI = hatt_h + error, # area upper limit confidence interval
             hatt.ll.CI = hatt_h - error, # area lower limit confidence interval
             hatp.ll.CI = hatt.ll.CI/A,
-            hatp.ul.CI = hatt.ul.CI/A
+            hatp.ul.CI = hatt.ul.CI/A,
+            region = unique(region),
+            provincia = unique(provincia)
             )
 estrato <- e %>% select(Estrato = estrato, 
                         LIArea = hatt.ll.CI,
@@ -104,9 +110,19 @@ estrato <- e %>% select(Estrato = estrato,
                         LIProporcion = hatp.ll.CI,
                         Proporcion = hatp_h,
                         LSProporcion = hatp.ul.CI,
-                        n = n)
+                        n = n,
+                        Provincia = provincia,
+                        Region = region)
 
+ggplot(estrato, aes(x = Provincia, y = Proporcion)) +
+  geom_bar(stat = "identity") + facet_grid(~Region, scales = "free_x") + 
+  ggtitle("") + ylab("Proporción de área bien clasificada") +
+  geom_errorbar(aes(ymin = LIProporcion, ymax = LSProporcion), width = 0.2) + 
+  theme(text = element_text(size=12),
+        axis.text.x = element_text(angle=90, vjust=0)) +
+  geom_text(aes(label = n, vjust=3.5), position = position_dodge(width=0.9))
 
+# Resultado por región ########################################################
 # y$region <- as.character(y$region)
 # y$region[y$region == "pchh"] <- "pch"
 # y$region[y$region == "pchs"]<- "pch"
@@ -130,7 +146,7 @@ e <- y %>% group_by(region) %>%
             hatp.ll.CI = hatt.ll.CI/A,
             hatp.ul.CI = hatt.ul.CI/A
             )
-region <- e %>% select(Estrato = estrato, 
+region <- e %>% select(Region = region, 
                         LIArea = hatt.ll.CI,
                         Area = hatt_h,
                         LSArea = hatt.ul.CI,
@@ -139,61 +155,50 @@ region <- e %>% select(Estrato = estrato,
                         LSProporcion = hatp.ul.CI,
                         n = n)
 
+ggplot(region, aes(x = Region, y = Proporcion)) +
+  geom_bar(stat = "identity") + #facet_grid(~Region, scales = "free_x") + 
+  ggtitle("") + ylab("Proporción de área bien clasificada") +
+  geom_errorbar(aes(ymin = LIProporcion, ymax = LSProporcion), width = 0.2) + 
+  theme(text = element_text(size=12),
+        axis.text.x = element_text(angle=90, vjust=0)) +
+  geom_text(aes(label = n, vjust=3.5), position = position_dodge(width=0.9))
 
 
-
-
-
-
-
-
-
-# mostrar en el mapa
-rp@data$estrato <- as.character(rp@data$estrato)
-e$estrato <- as.character(e$estrato)
-rp@data <- data.frame(rp@data, e[match(rp@data$estrato, e$estrato),])
-
-mapview(rp, zcol = "hatp_h", at = seq(0.4, 1,length.out = 6))
-
-# estimación de \hat{t}_r y \hat{p}_r por region
-# e$region <- as.character(e$region)
-# e$region[e$region == "pchh"] <- "pch"
-# e$region[e$region == "pchs"]<- "pch"
-# (r <- e %>% group_by(region) %>% 
-#   summarise(hatt_r = sum(hatt_h),
-#             hatp_r = hatt_r/sum(area.estrato)))
-
-rp@data <- data.frame(rp@data, r[match(rp@data$region, r$region_t),])
-mapview(rp, zcol = "hatp_r")
-
-# estimación de \hat{t}_p y \hat{p}_p por provincia
-(p <- e %>% group_by(provincia) %>% 
-    summarise(hatt_p = sum(hatt_h),
-              hatp_p = hatt_p/sum(area.estrato)))
-
-
-# estimación de hat{t} y hat{p} total
-(e %>% group_by() %>% 
-    summarise(hatt_p = sum(hatt_h),
-              hatp_p = hatt_p/sum(area.estrato)))
-
-# The variance of the estimated total of a stratum can be estimated by:
-# var(\hat{t}_h) = S^2_h(y)/n_h 
-# with S^2_h(y) the sample variance of y in stratum h
-
-# Estimación de la varianza de \hat{t}_h y \hat{p}_h
-# Agrupamos por estrato nuevamente
-var_e <- y %>% group_by(estrato, area.estrato) %>% 
+# Resultado por provincia ########################################################
+e <- y %>% group_by(provincia) %>% 
   # pi_i es la probabilidad de inclusión del segmento i en el estrato h
   # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
   # pi_{hi} = n_h/N_h 
   # n_h is sample size of stratum h, 
   # N_h total number of segments in stratum h, and 
   # y_{hi} the area correctly classified in segment i of stratum h.
-  summarise(n_h = sum(ha), # area total muestreada dentro del segmento 
-            var_y_h = var(y_hi), # varianza de y dentro del segmento
-                               # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
-            N_h = unique(area.estrato), # área total del estrato
-            var_hatt = var_y_h/ pi_hi, # varianza de hatt
-            hatp_h = var_hatt/N_h) 
-var_e
+  summarise(A = unique(area.prov),
+            n = n(), # area total muestreada dentro de la region 
+            N_h = unique(N.prov), # área total de la region
+            hatt_h = sum(y_hi/pi_hi , na.rm = TRUE), # área bien clasificada
+            hatp_h = hatt_h/A, # proporción bien clasificada
+            # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
+            var_hatt = (N_h^2) * var(y_hi)/n,# varianza de hatt
+            error = qt(0.975, df = n - 1) * sqrt(var_hatt),
+            hatt.ul.CI = hatt_h + error, # area upper limit confidence interval
+            hatt.ll.CI = hatt_h - error, # area lower limit confidence interval
+            hatp.ll.CI = hatt.ll.CI/A,
+            hatp.ul.CI = hatt.ul.CI/A
+  )
+provincia <- e %>% select(Provincia = provincia, 
+                       LIArea = hatt.ll.CI,
+                       Area = hatt_h,
+                       LSArea = hatt.ul.CI,
+                       LIProporcion = hatp.ll.CI,
+                       Proporcion = hatp_h,
+                       LSProporcion = hatp.ul.CI,
+                       n = n)
+
+ggplot(provincia, aes(x = Provincia, y = Proporcion)) +
+  geom_bar(stat = "identity") + #facet_grid(~Region, scales = "free_x") + 
+  ggtitle("") + ylab("Proporción de área bien clasificada") +
+  geom_errorbar(aes(ymin = LIProporcion, ymax = LSProporcion), width = 0.2) + 
+  theme(text = element_text(size=12),
+        axis.text.x = element_text(angle=90, vjust=0)) +
+  geom_text(aes(label = n, vjust=3.5), position = position_dodge(width=0.9))
+
