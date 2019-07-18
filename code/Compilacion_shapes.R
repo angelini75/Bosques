@@ -22,7 +22,7 @@ names(y) <- c("esp", "pchh", "pchs", "smi", "stb")
 for(i in seq_along(y)){
   y[[i]]@data <- y[[i]]@data[,c("IDENTIF", "PROVINCIA", "REGION", "MAJORITY")]
   y[[i]]@data$IDENTIF <- as.numeric(as.character(y[[i]]@data$IDENTIF))
-  names(y[[i]]@data) <- c("id", "prov.id", "reg.id", "unsef")
+  names(y[[i]]@data) <- c("id", "prov.id", "reg.id", "umsef")
 }
 
 
@@ -62,19 +62,19 @@ clases <- c( "TF_estable","OTF_estable", "OT_estable", "TF_perdida_1998-2006",
 class <- data.frame(clase = clases, cla.id = 1:10)
 
 for(i in seq_along(y)){
-  y[[i]]@data <-  data.frame(y[[i]]@data, class[match(y[[i]]@data$unsef, class$cla.id),])
+  y[[i]]@data <-  data.frame(y[[i]]@data, class[match(y[[i]]@data$umsef, class$cla.id),])
   y[[i]]@data <- y[[i]]@data[,-length(y[[i]]@data)]
 }
 for(i in seq_along(y)){
   names(y[[i]]@data) <- c("id", "prov.id", "reg.id", "cla.id", "provincia", 
-                          "region", "unsef" )
+                          "region", "umsef" )
 }
 
 for(i in names(y)){
   y[[i]]@data <-  data.frame(y[[i]]@data, r[[i]][match(y[[i]]@data$id, r[[i]]$id),])
 }
 
-columns <- c("id", "provincia","region", "unsef", "unlu","seg")
+columns <- c("id", "provincia","region", "umsef", "unlu","seg")
 
 for(i in names(y)){
   y[[i]]@data <-  y[[i]]@data[,columns]
@@ -133,13 +133,17 @@ mapview(rp, zcol = "estrato")
 # Ahora cruzamos segmentos con estratos
 for (i in seq_along(y)) {
 y[[i]]@data <- merge(x = y[[i]]@data, y = rp, by = "estrato", all.x = TRUE)
-y[[i]]@data <- y[[i]]@data[c("id", "estrato", "provincia", "region", "unsef",
+y[[i]]@data <- y[[i]]@data[c("id", "estrato", "provincia", "region", "umsef",
                              "unlu", "seg", "ha", "area.reg", "area.prov", 
                              "area.estrato")]
 }
 # y ahora juntamos todos los segmentos, (en un shape y) en una tabla
 # library(maptools) no finalizado
 # spRbind(y[[1]],y[[2]])
+for (i in seq_along(y)) {
+  y[[i]] <- sf::st_as_sf(y[[i]])
+  sf::st_write(y[[i]], paste0("results/", names(y)[i], ".shp"))
+}
 
 for (i in seq_along(y)) {
   y[[i]] <- as.data.frame(y[[i]])
