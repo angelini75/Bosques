@@ -183,7 +183,7 @@ library(raster)
 library(mapview)
 
 # levanto espinal
-e <- readOGR("shp/ESP/espinal_union_4326.shp")
+e <- readOGR("shp/ESP/espinal_union.shp")
 names(e)
 names(e) <- c("prov.id","reg.id", "unlu", "seg", "id") 
 # 
