@@ -81,7 +81,6 @@ N <- N %>% select(estrato, N) %>% unique() %>% group_by(estrato) %>%
   merge(y = N, by = "estrato")
 N <- N %>% select(estrato.clase, N.estr.cls = N, N.estr, N.prov, N.reg)
 
-
 # creamos el mismo campo en Y
 Y$estrato.clase <- paste0(Y$estrato, ".", Y$umsef)
 # ahora traemos el numero de segmentos por estrato.clase
@@ -303,3 +302,36 @@ estrato[,5:7] <- estrato %>% select(LIProporcion,Proporcion,LSProporcion) %>%
 write_csv(region, "results/region.csv")
 write_csv(provincia, "results/provincia.csv")
 write_csv(estrato, "results/estrato.csv")
+
+
+# estimación para toda el área completa
+y %>% select(area.reg) %>% unique() %>% sum()
+y %>% select(N.reg) %>% unique() %>% sum()
+e <- y %>% group_by() %>% 
+  # pi_i es la probabilidad de inclusión del segmento i en el estrato h
+  # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
+  # pi_{hi} = n_h/N_h 
+  # n_h is sample size of stratum h, 
+  # N_h total number of segments in stratum h, and 
+  # y_{hi} the area correctly classified in segment i of stratum h.
+  summarise(A = 101149015,
+            n = n(), # area total muestreada dentro de la region 
+            N_h = 5917429, # área total de la region
+            hatt_h = sum(y_hi/pi_hi , na.rm = TRUE), # área correctamente clasificada
+            hatp_h = hatt_h/A, # proporción correctamente clasificada
+            # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
+            var_hatt = (N_h^2) * var(y_hi)/n,# varianza de hatt
+            error = qt(0.975, df = n - 1) * sqrt(var_hatt),
+            hatt.ul.CI = hatt_h + error, # area upper limit confidence interval
+            hatt.ll.CI = hatt_h - error, # area lower limit confidence interval
+            hatp.ll.CI = hatt.ll.CI/A,
+            hatp.ul.CI = hatt.ul.CI/A
+  )
+(total <- e %>% select(LIArea = hatt.ll.CI,
+                      Area = hatt_h,
+                      LSArea = hatt.ul.CI,
+                      LIProporcion = hatp.ll.CI,
+                      Proporcion = hatp_h,
+                      LSProporcion = hatp.ul.CI,
+                      n = n))
+write_csv(total, "results/total.csv")
