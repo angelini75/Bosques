@@ -17,8 +17,20 @@ Y <- Y %>% select(-area.prov, -area.reg) %>%
   left_join(area.reg, by = "region") %>% 
   left_join(area.prov, by = "provincia")
 
-# Hay 11 segmentos sin clasificar
+# Hay 11 segmentos sin clasificar.
+# Se incluye aquí las categorías definidas por un solo intérprete
 Y[!complete.cases(Y),]
+Y[Y$id == 28301372,c("unlu","seg")] <- c("TF_perdida_2006-2013", 1)
+Y[Y$id == 21881021,c("unlu","seg")] <- c("TF_estable", 1)
+Y[Y$id == 24630709,c("unlu","seg")] <- c("OTF_perdida_2013-2017", 1)
+Y[Y$id == 30779554,c("unlu","seg")] <- c("OT_estable", 1)
+Y[Y$id ==   212886,c("unlu","seg")] <- c("OTF_perdida_2006-2013", 1)
+Y[Y$id ==   191067,c("unlu","seg")] <- c("OT_estable", 1)
+Y[Y$id ==    74981,c("unlu","seg")] <- c("OTF_estable", 1)
+Y[Y$id ==    16940,c("unlu","seg")] <- c("OT_estable", 1)
+Y[Y$id ==    99900,c("unlu","seg")] <- c("TF_perdida_2013-2017", 1)
+Y[Y$id ==   149759,c("unlu","seg")] <- c("OTF_estable", 1)
+Y[Y$id ==   117388,c("unlu","seg")] <- c("OTF_estable", 1)
 # Por ahora nos quedamos con los segmentos con datos completos
 Y <- Y[complete.cases(Y),]
 # N_h <- read.csv("csv/N_h.csv")
@@ -38,9 +50,10 @@ Y <- Y[complete.cases(Y),]
 
 # Cálculo de número de muestras por clase y por estrato
 
-knitr::kable(
+write.csv(
   Y %>% group_by(region, provincia, umsef) %>% summarise(n = n()) %>% 
-    unique() %>% arrange(region,provincia,umsef)
+    unique() %>% arrange(region,provincia,umsef) %>% as.data.frame(), 
+  file = "results/segmentos_x_clase.csv"
 )
 
 
