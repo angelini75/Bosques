@@ -1,0 +1,194 @@
+"","region","provincia","umsef","n"
+"1","esp","Buenos Aires","OT_estable",70
+"2","esp","Buenos Aires","OTF_estable",9
+"3","esp","Buenos Aires","OTF_perdida_2006-2013",2
+"4","esp","Buenos Aires","OTF_perdida_2013-2017",4
+"5","esp","Buenos Aires","TF_estable",5
+"6","esp","Buenos Aires","TF_perdida_2006-2013",2
+"7","esp","Córdoba","OT_estable",124
+"8","esp","Córdoba","OTF_estable",3
+"9","esp","Córdoba","OTF_perdida_1998-2006",3
+"10","esp","Córdoba","OTF_perdida_2006-2013",3
+"11","esp","Córdoba","TF_estable",3
+"12","esp","Córdoba","TF_perdida_1998-2006",5
+"13","esp","Córdoba","TF_perdida_2006-2013",1
+"14","esp","Corrientes","OT_estable",98
+"15","esp","Corrientes","OTF_estable",10
+"16","esp","Corrientes","OTF_perdida_1998-2006",1
+"17","esp","Corrientes","OTF_perdida_2006-2013",7
+"18","esp","Corrientes","OTF_perdida_2013-2017",5
+"19","esp","Corrientes","TF_estable",4
+"20","esp","Corrientes","TF_perdida_2006-2013",1
+"21","esp","Corrientes","TF_perdida_2013-2017",1
+"22","esp","Entre Ríos","OT_estable",126
+"23","esp","Entre Ríos","OTF_estable",19
+"24","esp","Entre Ríos","OTF_perdida_2006-2013",58
+"25","esp","Entre Ríos","OTF_perdida_2013-2017",13
+"26","esp","Entre Ríos","TF_estable",66
+"27","esp","Entre Ríos","TF_perdida_2006-2013",107
+"28","esp","Entre Ríos","TF_perdida_2013-2017",51
+"29","esp","La Pampa","OT_estable",224
+"30","esp","La Pampa","OTF_estable",118
+"31","esp","La Pampa","OTF_perdida_1998-2006",69
+"32","esp","La Pampa","OTF_perdida_2006-2013",5
+"33","esp","La Pampa","OTF_perdida_2013-2017",23
+"34","esp","La Pampa","TF_estable",47
+"35","esp","La Pampa","TF_perdida_1998-2006",38
+"36","esp","La Pampa","TF_perdida_2006-2013",6
+"37","esp","La Pampa","TF_perdida_2013-2017",83
+"38","esp","San Luis","OT_estable",131
+"39","esp","San Luis","OTF_estable",52
+"40","esp","San Luis","OTF_perdida_1998-2006",77
+"41","esp","San Luis","OTF_perdida_2006-2013",75
+"42","esp","San Luis","OTF_perdida_2013-2017",105
+"43","esp","San Luis","TF_estable",24
+"44","esp","San Luis","TF_perdida_1998-2006",106
+"45","esp","San Luis","TF_perdida_2006-2013",32
+"46","esp","San Luis","TF_perdida_2013-2017",15
+"47","pchh","Chaco","OT_estable",194
+"48","pchh","Chaco","OTF_estable",50
+"49","pchh","Chaco","OTF_perdida_1998-2006",50
+"50","pchh","Chaco","OTF_perdida_2006-2013",50
+"51","pchh","Chaco","OTF_perdida_2013-2017",50
+"52","pchh","Chaco","TF_estable",209
+"53","pchh","Chaco","TF_perdida_1998-2006",50
+"54","pchh","Chaco","TF_perdida_2006-2013",69
+"55","pchh","Chaco","TF_perdida_2013-2017",50
+"56","pchh","Corrientes","OT_estable",174
+"57","pchh","Corrientes","OTF_estable",7
+"58","pchh","Corrientes","OTF_perdida_2006-2013",1
+"59","pchh","Corrientes","OTF_perdida_2013-2017",1
+"60","pchh","Corrientes","TF_estable",3
+"61","pchh","Formosa","OT_estable",96
+"62","pchh","Formosa","OTF_estable",96
+"63","pchh","Formosa","OTF_perdida_1998-2006",50
+"64","pchh","Formosa","OTF_perdida_2006-2013",50
+"65","pchh","Formosa","OTF_perdida_2013-2017",59
+"66","pchh","Formosa","TF_estable",142
+"67","pchh","Formosa","TF_perdida_1998-2006",50
+"68","pchh","Formosa","TF_perdida_2006-2013",50
+"69","pchh","Formosa","TF_perdida_2013-2017",50
+"70","pchh","Santa Fe","OT_estable",259
+"71","pchh","Santa Fe","OTF_estable",22
+"72","pchh","Santa Fe","OTF_perdida_1998-2006",17
+"73","pchh","Santa Fe","OTF_perdida_2006-2013",13
+"74","pchh","Santa Fe","OTF_perdida_2013-2017",8
+"75","pchh","Santa Fe","TF_estable",24
+"76","pchh","Santa Fe","TF_perdida_1998-2006",5
+"77","pchh","Santa Fe","TF_perdida_2006-2013",2
+"78","pchh","Santa Fe","TF_perdida_2013-2017",1
+"79","pchs","Catamarca","OT_estable",41
+"80","pchs","Catamarca","OTF_estable",39
+"81","pchs","Catamarca","OTF_perdida_1998-2006",47
+"82","pchs","Catamarca","OTF_perdida_2006-2013",17
+"83","pchs","Catamarca","OTF_perdida_2013-2017",8
+"84","pchs","Catamarca","TF_estable",15
+"85","pchs","Catamarca","TF_perdida_1998-2006",7
+"86","pchs","Catamarca","TF_perdida_2006-2013",1
+"87","pchs","Catamarca","TF_perdida_2013-2017",2
+"88","pchs","Córdoba","OT_estable",202
+"89","pchs","Córdoba","OTF_estable",69
+"90","pchs","Córdoba","OTF_perdida_1998-2006",40
+"91","pchs","Córdoba","OTF_perdida_2006-2013",17
+"92","pchs","Córdoba","OTF_perdida_2013-2017",5
+"93","pchs","Córdoba","TF_estable",39
+"94","pchs","Córdoba","TF_perdida_1998-2006",32
+"95","pchs","Córdoba","TF_perdida_2006-2013",8
+"96","pchs","Córdoba","TF_perdida_2013-2017",1
+"97","pchs","Jujuy","OT_estable",2
+"98","pchs","Jujuy","TF_estable",4
+"99","pchs","Jujuy","TF_perdida_1998-2006",1
+"100","pchs","Jujuy","TF_perdida_2006-2013",2
+"101","pchs","Jujuy","TF_perdida_2013-2017",2
+"102","pchs","La Rioja","OT_estable",48
+"103","pchs","La Rioja","OTF_estable",163
+"104","pchs","La Rioja","OTF_perdida_1998-2006",34
+"105","pchs","La Rioja","OTF_perdida_2006-2013",26
+"106","pchs","La Rioja","OTF_perdida_2013-2017",75
+"107","pchs","La Rioja","TF_estable",26
+"108","pchs","La Rioja","TF_perdida_1998-2006",1
+"109","pchs","La Rioja","TF_perdida_2006-2013",3
+"110","pchs","La Rioja","TF_perdida_2013-2017",4
+"111","pchs","Salta","OT_estable",79
+"112","pchs","Salta","OTF_estable",43
+"113","pchs","Salta","OTF_perdida_1998-2006",13
+"114","pchs","Salta","OTF_perdida_2006-2013",30
+"115","pchs","Salta","OTF_perdida_2013-2017",41
+"116","pchs","Salta","TF_estable",171
+"117","pchs","Salta","TF_perdida_1998-2006",75
+"118","pchs","Salta","TF_perdida_2006-2013",87
+"119","pchs","Salta","TF_perdida_2013-2017",83
+"120","pchs","San Juan","OT_estable",4
+"121","pchs","San Juan","OTF_estable",20
+"122","pchs","San Juan","OTF_perdida_2006-2013",1
+"123","pchs","San Luis","OT_estable",26
+"124","pchs","San Luis","OTF_estable",95
+"125","pchs","San Luis","OTF_perdida_1998-2006",34
+"126","pchs","San Luis","OTF_perdida_2006-2013",47
+"127","pchs","San Luis","OTF_perdida_2013-2017",57
+"128","pchs","San Luis","TF_estable",7
+"129","pchs","San Luis","TF_perdida_1998-2006",2
+"130","pchs","San Luis","TF_perdida_2006-2013",2
+"131","pchs","San Luis","TF_perdida_2013-2017",3
+"132","pchs","Santiago del Estero","OT_estable",260
+"133","pchs","Santiago del Estero","OTF_estable",72
+"134","pchs","Santiago del Estero","OTF_perdida_1998-2006",89
+"135","pchs","Santiago del Estero","OTF_perdida_2006-2013",89
+"136","pchs","Santiago del Estero","OTF_perdida_2013-2017",52
+"137","pchs","Santiago del Estero","TF_estable",227
+"138","pchs","Santiago del Estero","TF_perdida_1998-2006",125
+"139","pchs","Santiago del Estero","TF_perdida_2006-2013",116
+"140","pchs","Santiago del Estero","TF_perdida_2013-2017",85
+"141","pchs","Tucumán","OT_estable",35
+"142","pchs","Tucumán","OTF_estable",5
+"143","pchs","Tucumán","OTF_perdida_1998-2006",7
+"144","pchs","Tucumán","OTF_perdida_2006-2013",14
+"145","pchs","Tucumán","OTF_perdida_2013-2017",2
+"146","pchs","Tucumán","TF_estable",9
+"147","pchs","Tucumán","TF_perdida_1998-2006",8
+"148","pchs","Tucumán","TF_perdida_2006-2013",3
+"149","pchs","Tucumán","TF_perdida_2013-2017",2
+"150","smi","Corrientes","OT_estable",59
+"151","smi","Corrientes","OTF_estable",20
+"152","smi","Corrientes","OTF_perdida_2006-2013",1
+"153","smi","Corrientes","TF_estable",1
+"154","smi","Misiones","OT_estable",91
+"155","smi","Misiones","OTF_estable",130
+"156","smi","Misiones","OTF_perdida_1998-2006",150
+"157","smi","Misiones","OTF_perdida_2006-2013",149
+"158","smi","Misiones","OTF_perdida_2013-2017",26
+"159","smi","Misiones","TF_estable",149
+"160","smi","Misiones","TF_perdida_1998-2006",150
+"161","smi","Misiones","TF_perdida_2006-2013",150
+"162","smi","Misiones","TF_perdida_2013-2017",150
+"163","stb","Catamarca","OT_estable",8
+"164","stb","Catamarca","OTF_estable",16
+"165","stb","Catamarca","OTF_perdida_2006-2013",1
+"166","stb","Catamarca","TF_estable",2
+"167","stb","Jujuy","OT_estable",39
+"168","stb","Jujuy","OTF_estable",42
+"169","stb","Jujuy","OTF_perdida_1998-2006",31
+"170","stb","Jujuy","OTF_perdida_2006-2013",35
+"171","stb","Jujuy","OTF_perdida_2013-2017",46
+"172","stb","Jujuy","TF_estable",38
+"173","stb","Jujuy","TF_perdida_1998-2006",17
+"174","stb","Jujuy","TF_perdida_2006-2013",38
+"175","stb","Jujuy","TF_perdida_2013-2017",39
+"176","stb","Salta","OT_estable",70
+"177","stb","Salta","OTF_estable",66
+"178","stb","Salta","OTF_perdida_1998-2006",116
+"179","stb","Salta","OTF_perdida_2006-2013",101
+"180","stb","Salta","OTF_perdida_2013-2017",10
+"181","stb","Salta","TF_estable",101
+"182","stb","Salta","TF_perdida_1998-2006",128
+"183","stb","Salta","TF_perdida_2006-2013",108
+"184","stb","Salta","TF_perdida_2013-2017",105
+"185","stb","Tucumán","OT_estable",33
+"186","stb","Tucumán","OTF_estable",27
+"187","stb","Tucumán","OTF_perdida_1998-2006",3
+"188","stb","Tucumán","OTF_perdida_2006-2013",13
+"189","stb","Tucumán","OTF_perdida_2013-2017",1
+"190","stb","Tucumán","TF_estable",24
+"191","stb","Tucumán","TF_perdida_1998-2006",5
+"192","stb","Tucumán","TF_perdida_2006-2013",4
+"193","stb","Tucumán","TF_perdida_2013-2017",5
