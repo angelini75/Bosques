@@ -335,3 +335,82 @@ e <- y %>% group_by() %>%
                       LSProporcion = hatp.ul.CI,
                       n = n))
 write_csv(total, "results/total.csv")
+
+
+############ Producto 3 - informe final #############################
+# Resultado por estrato ########################################################
+clases <- tibble(clases = c( "TF_estable","OTF_estable", "OT_estable", 
+                             "TF_perdida_1998-2006",
+                             "OTF_perdida_1998-2006", "TF_perdida_2006-2013",  
+                             "OTF_perdida_2006-2013", "TF_perdida_2013-2017",  
+                             "OTF_perdida_2013-2017", "No_es_posible_determinar"),
+                 code = 1:10)
+
+
+y <- y %>% filter(unlu != "No_es_posible_determinar")
+y <- y %>% left_join(y = class, by = c("unlu" = "clas.name"))  
+y <- y %>% rename(code.unlu = clase)
+y <- y %>% left_join(y = class, by = c("umsef"="clas.name"))  
+y <- y %>% rename(code.umsef = clase)
+y <- y %>% mutate(hap = (ha/pi_hi)/1000,
+                  happ = (hap*1000/101149015)*100)
+
+y$code.unlu <- as.factor(y$code.unlu)
+y$code.umsef <- as.factor(y$code.umsef)
+
+y %>% group_by(code.umsef, code.unlu) %>% select(code.unlu, code.umsef, happ)  %>% 
+  summarise(sum = sum(happ, na.rm = T)) %>% 
+  ggplot(aes(x = code.unlu, y = code.umsef, fill = sum)) + geom_tile() +
+  scale_fill_gradient2(low = "#fef0d9",
+                       high = "#b30000", space = "Lab",
+                       na.value = "transparent", trans = "log",
+                       #name = "x1000 ha"
+                       guide=FALSE) + 
+  geom_text(aes(label=paste0(round(sum,2),"%"))) + labs(x = "Clases de referencia",
+                                            y = "Clases del mapa")
+
+y %>% group_by(region) %>% 
+  mutate(area = sum(hap, na.rm = T)) %>% 
+  group_by(code.umsef, code.unlu, region) %>%                                                             
+  select(region, code.unlu, code.umsef, hap, area)  %>% 
+    summarise(sum = sum(hap, na.rm = T),
+              perc = 100*(sum/unique(area))) %>% 
+    ggplot(aes(x = code.unlu, y = code.umsef, fill = perc)) + geom_tile() +
+    scale_fill_gradient2(low = "#fef0d9",
+                         high = "#b30000", space = "Lab",
+                         na.value = "transparent", trans = "log",
+                         guide=FALSE) + 
+    geom_text(aes(label=paste0(round(perc,2),"%"))) + labs(x = "Clases de referencia",
+                                                          y = "Clases del mapa") + 
+  facet_wrap(~region)
+
+y %>% group_by(provincia) %>%
+  filter(provincia == "Chaco"| provincia == "Santiago del Estero" |
+           provincia == "Formosa" | provincia == "Salta") %>% 
+  mutate(area = sum(hap, na.rm = T)) %>% 
+  group_by(code.umsef, code.unlu, provincia)  %>% 
+  select(provincia, code.unlu, code.umsef, hap, area)  %>% 
+  summarise(sum = sum(hap, na.rm = T),
+            perc = 100*(sum/unique(area))) %>% 
+  ggplot(aes(x = code.unlu, y = code.umsef, fill = perc)) + geom_tile() +
+  scale_fill_gradient2(low = "#fef0d9",
+                       high = "#b30000", space = "Lab",
+                       na.value = "transparent", trans = "log",
+                       guide=FALSE) + 
+  geom_text(aes(label=paste0(round(perc,2),"%"))) + labs(x = "Clases de referencia",
+                                                         y = "Clases del mapa") + 
+  facet_wrap(~provincia,)
+
+# library(reshape2)
+# 
+# cm <- reshape2::dcast(y, code.unlu~code.umsef, fun.aggregate = sum, value.var = "happ")
+# melt(cm, id.vars = "unlu")
+# 
+# ggplot(y, aes( x=code.unlu, y=code.umsef) ) + 
+#   stat_sum(aes(group = 1, weight = hap), alpha = 0.3, geom = "tile") 
+#   scale_size(breaks = c(250, 500, 750, 1000, 1250), trans = "log",
+#              size = c(1, 2, 3, 4, 5)) 
+# facet_wrap( ~region) 
+# 
+# ggplot(y, aes(code.unlu, code.umsef, fill = hap))+
+#   geom_tile(stat="identity")  
