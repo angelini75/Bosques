@@ -104,7 +104,7 @@ y <- y %>% group_by(estrato.clase) %>% mutate(pi_hi = n()/N.estr.cls, n = n())
 # Unificamos pchh y pchs
 y$region <- as.character(y$region)
 y$region[y$region == "pchh"] <- "pch"
-y$region[y$region == "pchs"]<- "pch"
+y$region[y$region == "pchs"] <- "pch"
 
 # Resultado por estrato ########################################################
 e <- y %>% group_by(estrato) %>% 
@@ -375,16 +375,18 @@ y %>% group_by(region) %>%
   select(region, code.unlu, code.umsef, hap, area)  %>% 
     summarise(sum = sum(hap, na.rm = T),
               perc = 100*(sum/unique(area))) %>% 
-    ggplot(aes(x = code.unlu, y = code.umsef, fill = perc)) + geom_tile() +
+    ggplot(aes(x = code.unlu, y = code.umsef, fill = sum)) + geom_tile() +
     scale_fill_gradient2(low = "#fef0d9",
                          high = "#b30000", space = "Lab",
                          na.value = "transparent", trans = "log",
                          guide=FALSE) + 
-    geom_text(aes(label=paste0(round(perc,2),"%"))) + labs(x = "Clases de referencia",
+    geom_text(aes(label=paste0(round(sum,2)," ha"))) + labs(x = "Clases de referencia",
                                                           y = "Clases del mapa") + 
   facet_wrap(~region)
 
+  
 y %>% group_by(provincia) %>%
+  # arrage
   filter(provincia == "Chaco"| provincia == "Santiago del Estero" |
            provincia == "Formosa" | provincia == "Salta") %>% 
   mutate(area = sum(hap, na.rm = T)) %>% 
@@ -392,6 +394,7 @@ y %>% group_by(provincia) %>%
   select(provincia, code.unlu, code.umsef, hap, area)  %>% 
   summarise(sum = sum(hap, na.rm = T),
             perc = 100*(sum/unique(area))) %>% 
+  # Plot
   ggplot(aes(x = code.unlu, y = code.umsef, fill = perc)) + geom_tile() +
   scale_fill_gradient2(low = "#fef0d9",
                        high = "#b30000", space = "Lab",
@@ -401,16 +404,84 @@ y %>% group_by(provincia) %>%
                                                          y = "Clases del mapa") + 
   facet_wrap(~provincia,)
 
-# library(reshape2)
-# 
-# cm <- reshape2::dcast(y, code.unlu~code.umsef, fun.aggregate = sum, value.var = "happ")
-# melt(cm, id.vars = "unlu")
-# 
-# ggplot(y, aes( x=code.unlu, y=code.umsef) ) + 
-#   stat_sum(aes(group = 1, weight = hap), alpha = 0.3, geom = "tile") 
-#   scale_size(breaks = c(250, 500, 750, 1000, 1250), trans = "log",
-#              size = c(1, 2, 3, 4, 5)) 
-# facet_wrap( ~region) 
-# 
-# ggplot(y, aes(code.unlu, code.umsef, fill = hap))+
-#   geom_tile(stat="identity")  
+# export to excell
+write.csv(row.names = F,
+  y %>% group_by(region) %>% filter(region == "smi") %>% 
+  mutate(area = sum(hap, na.rm = T)) %>% 
+  group_by(code.umsef, code.unlu) %>%                                                             
+  select(code.unlu, code.umsef, hap) %>% 
+    summarise(sum = sum(hap, na.rm = T)), "results/smi.csv")
+
+
+
+#### Matrices por region ####
+clases <- tibble(clases = c( "TF_estable","OTF_estable", "OT_estable", 
+                             "TF_perdida_1998-2006",
+                             "OTF_perdida_1998-2006", "TF_perdida_2006-2013",  
+                             "OTF_perdida_2006-2013", "TF_perdida_2013-2017",  
+                             "OTF_perdida_2013-2017", "No_es_posible_determinar"),
+                 code = 1:10)
+
+
+y <- y %>% filter(unlu != "No_es_posible_determinar")
+y <- y %>% left_join(y = class, by = c("unlu" = "clas.name"))  
+y <- y %>% rename(code.unlu = clase)
+y <- y %>% left_join(y = class, by = c("umsef"="clas.name"))  
+y <- y %>% rename(code.umsef = clase)
+
+
+y$code.unlu <- as.factor(y$code.unlu)
+y$code.umsef <- as.factor(y$code.umsef)
+
+
+
+e <- y %>% group_by(region, code.unlu) %>% 
+  # pi_i es la probabilidad de inclusión del segmento i en el estrato h
+  # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
+  # pi_{hi} = n_h/N_h 
+  # n_h is sample size of stratum h, 
+  # N_h total number of segments in stratum h, and 
+  # y_{hi} the area correctly classified in segment i of stratum h.
+  summarise(#A = sum(unique(area.estrato)),
+            n = n(), # area total muestreada dentro de la region 
+            N_h = sum(unique(N.estr.cls)), # área total de la region
+            hatt_h = sum(ha/pi_hi , na.rm = TRUE), # área correctamente clasificada
+            #hatp_h = hatt_h/A, # proporción correctamente clasificada
+            # 1/(n-1) sum_{i=1}^n (y_i - \bar{y})^2.
+            var_hatt = (N_h^2) * var(ha)/n,# varianza de hatt
+            error = qt(0.975, df = n - 1) * sqrt(var_hatt),
+            hatt.ul.CI = hatt_h + error, # area upper limit confidence interval
+            hatt.ll.CI = hatt_h - error, # area lower limit confidence interval
+            ) %>% 
+  select(code.unlu, n, -N_h, superficie = hatt_h, -var_hatt, error, LS = hatt.ul.CI, LI = hatt.ll.CI) %>% 
+  mutate(code.unlu, superficie = round(superficie/1000,1),
+         LS = round(LS/1000, 1), LI = round(LI/1000,1), error = round(error/1000,1),
+         tasa = round(error/superficie, 3)*100)
+
+library(readxl)
+write_excel_csv(e, "results/regiones.xlsx")
+
+region <- e %>% select(Region = region, 
+                       LIArea = hatt.ll.CI,
+                       Area = hatt_h,
+                       LSArea = hatt.ul.CI,
+                       LIProporcion = hatp.ll.CI,
+                       Proporcion = hatp_h,
+                       LSProporcion = hatp.ul.CI,
+                       n = n)
+
+region$Region <- gsub(region$Region, pattern = "esp", replacement = "Espinal")
+region$Region <- gsub(region$Region, pattern = "pch", replacement = "Parque Chaqueño")
+region$Region <- gsub(region$Region, pattern = "smi", replacement = "Selva Misionera")
+region$Region <- gsub(region$Region, pattern = "stb", replacement = "Selva Tucumano-Boliviana")
+
+png("results/region.prop.png", width = 2000, height = 1100, res = 200)
+ggplot(region, aes(x = Region, y = Proporcion)) +
+  geom_bar(stat = "identity", fill = "blue", color = "black", alpha = 0.5) + #facet_grid(~Region, scales = "free_x") + 
+  ggtitle("") + ylab("Proporción de área correctamente clasificada") + xlab("Región") +
+  geom_errorbar(aes(ymin = LIProporcion, ymax = LSProporcion), width = 0.2) + 
+  theme(text = element_text(size=16),
+        axis.text.x = element_text(angle=0, vjust=0)) +
+  geom_text(aes(label = n, vjust=3.5), position = position_dodge(width=0.9)) + 
+  labs(tag = "a") 
+dev.off()
