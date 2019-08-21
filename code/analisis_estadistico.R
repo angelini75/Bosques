@@ -406,11 +406,11 @@ y %>% group_by(provincia) %>%
 
 # export to excell
 write.csv(row.names = F,
-  y %>% group_by(region) %>% filter(region == "smi") %>% 
-  mutate(area = sum(hap, na.rm = T)) %>% 
+  y %>% #group_by(region) %>% filter(region == "smi") %>% 
   group_by(code.umsef, code.unlu) %>%                                                             
-  select(code.unlu, code.umsef, hap) %>% 
-    summarise(sum = sum(hap, na.rm = T)), "results/smi.csv")
+    mutate(area = sum(hap, na.rm = T)) %>% 
+    select(code.unlu, code.umsef, hap) %>% 
+    summarise(sum = sum(hap, na.rm = T)), "results/matriz_global.csv")
 
 
 
@@ -435,7 +435,7 @@ y$code.umsef <- as.factor(y$code.umsef)
 
 
 
-e <- y %>% group_by(region, code.unlu) %>% 
+e <- y %>% group_by(region, code.unlu, ) %>% 
   # pi_i es la probabilidad de inclusión del segmento i en el estrato h
   # \hat{t)_h = sum{i=1}^{n_h} y_{hi}/pi_{hi} with 0
   # pi_{hi} = n_h/N_h 
@@ -485,3 +485,6 @@ ggplot(region, aes(x = Region, y = Proporcion)) +
   geom_text(aes(label = n, vjust=3.5), position = position_dodge(width=0.9)) + 
   labs(tag = "a") 
 dev.off()
+
+
+# análisis 
