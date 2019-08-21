@@ -412,6 +412,13 @@ write.csv(row.names = F,
     select(code.unlu, code.umsef, hap) %>% 
     summarise(sum = sum(hap, na.rm = T)), "results/matriz_global.csv")
 
+write.csv(row.names = F,
+          y %>% #group_by(region) %>% filter(region == "smi") %>% 
+            group_by(code.umsef, code.unlu, provincia) %>% 
+            filter(provincia %in% c("Santiago del Estero", "Salta", "Chaco", "Formosa")) %>% 
+            mutate(area = sum(hap, na.rm = T)) %>% 
+            select(code.unlu, code.umsef, hap) %>% 
+            summarise(sum = sum(hap, na.rm = T)), "results/matriz_provincias.csv")
 
 
 #### Matrices por region ####
@@ -486,5 +493,119 @@ ggplot(region, aes(x = Region, y = Proporcion)) +
   labs(tag = "a") 
 dev.off()
 
+y$seg <- as.factor(y$seg)
 
-# análisis 
+########## análisis de concordancia entre interpretes #######
+#seg.global <- 
+  y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% 
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.global.png", plot = seg.global, 
+       width = 15, height = 10, units = "cm")  
+
+
+seg.pch <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(region == "pch") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.pch.png", plot = seg.pch, 
+       width = 15, height = 10, units = "cm")  
+
+seg.esp <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(region == "esp") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.esp.png", plot = seg.esp, 
+       width = 15, height = 10, units = "cm")  
+
+seg.smi <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(region == "smi") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.smi.png", plot = seg.smi, 
+       width = 15, height = 10, units = "cm")  
+
+seg.stb <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(region == "stb") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.stb.png", plot = seg.stb, 
+       width = 15, height = 10, units = "cm")  
+
+seg.salta <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(provincia == "Salta") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.salta.png", plot = seg.salta, 
+       width = 15, height = 10, units = "cm")  
+
+seg.santiago <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(provincia == "Santiago del Estero") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.santiago.png", plot = seg.santiago, 
+       width = 15, height = 10, units = "cm")  
+
+seg.chaco <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(provincia == "Chaco") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.chaco.png", plot = seg.chaco, 
+       width = 15, height = 10, units = "cm")  
+
+seg.formosa <- y %>% group_by(code.unlu) %>% select(code.unlu, seg, region, provincia) %>% 
+  mutate(Concordancia = seg) %>% filter(provincia == "Formosa") %>%  
+  ggplot(aes(x= code.unlu,fill= Concordancia))+ geom_bar(position="fill", color = "black") +
+  geom_text(aes(label=..count..), size = 3, stat='count',
+            position = position_fill(vjust=0.5)) + xlab("Categorías") + 
+  ylab("Proporción") + scale_size_discrete("n") + scale_fill_brewer() +
+  theme(legend.position="bottom", legend.direction="horizontal")
+
+ggsave(filename = "results/seg.formosa.png", plot = seg.formosa, 
+       width = 15, height = 10, units = "cm")  
+
+library(ggalluvial)
+y %>% #group_by(region) %>% filter(region == "smi") %>% 
+  group_by(code.umsef, code.unlu) %>% #filter(code.unlu %in% c(4,5,6,7,8,9) & code.umsef %in% c(4,5,6,7,8,9)) %>%                                                             
+  summarise(area = sum(hap, na.rm = T)/1000, Mapa = unique(code.umsef), Referencia = unique(code.unlu)) %>% 
+  group_by(Referencia, Mapa) %>% select(Referencia, Mapa, area) %>% 
+  ggplot(aes(axis1 = Mapa, axis2 = Referencia, y = area)) +
+  scale_x_discrete(limits = c("Referencia", "Mapa"), expand = c(.1, .05)) +
+  xlab("") +
+  geom_alluvium(aes(fill = Referencia)) +
+  geom_stratum() + geom_text(stat = "stratum", label.strata = TRUE) +
+  theme_minimal()
+  
